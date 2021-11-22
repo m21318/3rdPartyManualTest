@@ -80,13 +80,20 @@ layout: null
 		}
 	}
 
-	window.index = lunr(function () {
-		this.field("id");
-		this.field("title", {boost: 10});
-		this.field("category");
-		this.field("url");
-		this.field("content");
-	});
+	// window.index = lunr(function () {
+	// 	this.field("id");
+	// 	this.field("title", {boost: 10});
+	// 	this.field("category");
+	// 	this.field("url");
+	// 	this.field("content");
+	// });
+
+	var idx = new lunr.Index;
+	idx.field('id');
+	idx.field('title', { boost: 10 });
+	idx.field('author');
+	idx.field('category');
+	idx.field('content');
 
 	var query = decodeURIComponent((getQueryVariable("q") || "").replace(/\+/g, "%20")),
 		searchQueryContainerEl = document.getElementById("search-query-container"),
@@ -94,12 +101,12 @@ layout: null
 		searchInputEl = document.getElementById("search-input");
 
 	searchInputEl.value = query;
-	searchQueryEl.innerText = query;
+	searchQueryEl.innerText = query;	
 	searchQueryContainerEl.style.display = "inline";
 
 	for (var key in window.data) {
-		window.index.add(window.data[key]);
+		idx.add(window.data[key]);
 	}
+	displaySearchResults(idx.search(query), query); // Hand the results off to be displayed
 
-	displaySearchResults(window.index.search(query), query); // Hand the results off to be displayed
 })();
